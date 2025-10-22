@@ -5,6 +5,7 @@ require_once "controllers/controllerPasajeros.php";
 require_once "controllers/controllerReserva.php";
 require_once "controllers/controllerReservaPasajero.php";
 require_once "controllers/controllerVuelo.php";
+require_once "controllers/controllerAviones.php";
 
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
@@ -165,6 +166,10 @@ try {
             $controllerVuelo->vuelosDisponibles();
             break;
 
+            case 'listarAviones':
+            $controllerAviones = new controllerAviones();
+            $controllerAviones->listar();
+            break;
 
     }
 } catch (\Throwable $e) {
