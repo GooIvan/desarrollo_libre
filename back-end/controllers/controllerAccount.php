@@ -53,4 +53,23 @@ class controllerAccount{
         
         echo json_encode(["success" => false, "message" => "Not implemented: provide IdAccount to update"]);
     }
+
+    public function validar($Email, $Contrasena){
+        header('Content-Type: application/json');
+        if (empty($Email) || empty($Contrasena)){
+            http_response_code(400);
+            echo json_encode(["success" => false, "message" => "Email and Contrasena are required"]);
+            return;
+        }
+        $account = new account();
+        $isValid = $account->validarCredenciales($Email, $Contrasena);
+        if ($isValid){
+            echo json_encode(["success" => true, "message" => "Valid credentials"]);
+        } else {
+            http_response_code(401);
+            echo json_encode(["success" => false, "message" => "Invalid credentials"]);
+        }
+    }
+
+    
 }

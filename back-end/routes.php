@@ -47,9 +47,10 @@ try {
             $controllerAccount->actualizar($email, $contrasena);
             break;
 
-        default:
-            http_response_code(404);
-            echo json_encode(["error" => "Unknown action"]);
+            case 'validarAccount':
+            $email = isset($jsonBody['Email']) ? $jsonBody['Email'] : null;
+            $contrasena = isset($jsonBody['Contrasena']) ? $jsonBody['Contrasena'] : null;
+            $controllerAccount->validar($email, $contrasena);
             break;
     }
 } catch (\Throwable $e) {
