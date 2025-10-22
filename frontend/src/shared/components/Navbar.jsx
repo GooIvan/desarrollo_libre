@@ -118,7 +118,7 @@ const Navbar = () => {
             </div>
 
             {/* Perfil de usuario */}
-            <Link to="/login" className="btn text-white btn-sm">
+            <Link to="/profile" className="btn text-white btn-sm">
               <i className="bi bi-person"></i>
             </Link>
           </div>

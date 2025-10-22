@@ -1,19 +1,42 @@
-
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { useTranslation } from 'react-i18next';
+import { useState } from "react"
+import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from 'react-i18next'
+import { useRegister } from '../context/RegisterContext'
 import Navbar from "../../../shared/components/Navbar";
 
-const LoginPage = () => {
+const RegisterPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { t } = useTranslation();
+  const { register, loading } = useRegister();
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Login attempt:', { email, password });
-    // Aquí iría la lógica de autenticación
+    
+    if (password !== confirmPassword) {
+      alert(t('passwords_dont_match', 'Las contraseñas no coinciden'));
+      return;
+    }
+
+    try {
+      const success = await register({ email, password });
+      if (success) {
+        // Mostrar mensaje de éxito y redirigir al perfil después de un breve delay
+        alert(t('registration_successful', 'Registro exitoso'));
+        setTimeout(() => {
+          navigate('/profile');
+        }, 100);
+      } else {
+        alert(t('registration_failed', 'Error en el registro'));
+      }
+    } catch (error) {
+      console.error("Error during registration:", error);
+      alert(t('registration_error', 'Error durante el registro'));
+    }
   };
 
   return (
@@ -27,7 +50,7 @@ const LoginPage = () => {
               <div className="card-body p-5">
                 {/* Título */}
                 <h2 className="text-center mb-4 fw-bold text-dark">
-                  {t('login_title', 'Inicio de sesión')}
+                  {t('register_title', 'Crear una cuenta')}
                 </h2>
                 
                 {/* Formulario */}
@@ -72,7 +95,32 @@ const LoginPage = () => {
                     </div>
                   </div>
 
-                  {/* Botón de login */}
+                  <div className="mb-4">
+                    <label htmlFor="confirmPassword" className="form-label text-muted">
+                      {t('confirm_password')}
+                    </label>
+                    <div className="input-group">
+                      <input
+                        type={showConfirmPassword ? "text" : "password"}
+                        className="form-control form-control-lg border-1 rounded-start-3"
+                        id="confirmPassword"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        required
+                        style={{ backgroundColor: '#f8f9fa' }}
+                      />
+                      <button
+                        className="btn btn-outline-secondary rounded-end-3"
+                        type="button"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        style={{ backgroundColor: '#f8f9fa' }}
+                      >
+                        <i className={`bi ${showConfirmPassword ? 'bi-eye-slash' : 'bi-eye'}`}></i>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Botón de registro */}
                   <button
                     type="submit"
                     className="btn btn-lg w-100 text-white fw-semibold rounded-3 mb-3"
@@ -81,34 +129,28 @@ const LoginPage = () => {
                       borderColor: '#6f42c1',
                       padding: '12px'
                     }}
+                    disabled={loading}
                   >
-                    {t('login_button', 'Ingresar')}
+                    {loading ? (
+                      <>
+                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        {t('creating_account', 'Creando cuenta...')}
+                      </>
+                    ) : (
+                      t('create_account', 'Crear cuenta')
+                    )}
                   </button>
-
-                  {/* Enlaces adicionales */}
-                  {/*
-                  <div className="text-center">
-                    <a 
-                      href="#" 
-                      className="text-decoration-none text-muted small"
-                      style={{ fontSize: '0.9rem' }}
-                    >
-                      {t('forgot_password', '¿Olvidaste tu contraseña?')}
-                    </a>
-                  </div>
-                  <hr className="my-4" />
-                  */}
 
                   <div className="text-center">
                     <span className="text-muted small me-2">
-                      {t('no_account', '¿No tienes cuenta?')}
+                      {t('already_have_account', '¿Ya tienes una cuenta?')}
                     </span>
                     <Link
-                      to="/register"
+                      to="/login"
                       className="text-decoration-none fw-semibold"
                       style={{ color: '#6f42c1' }}
                     >
-                      {t('register', 'Regístrate')}
+                      {t('login', 'Iniciar sesión')}
                     </Link>
                   </div>
                 </form>
@@ -125,4 +167,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default RegisterPage;
