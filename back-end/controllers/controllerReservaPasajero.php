@@ -53,4 +53,21 @@ class controllerReservaPasajero {
             echo json_encode(["success" => false]);
         }
     }
+
+    public function actualizar($IdReserva, $IdPasajero){
+        header('Content-Type: application/json');
+        if (empty($IdReserva) || empty($IdPasajero)){
+            http_response_code(400);
+            echo json_encode(["success" => false, "message" => "IdReserva and IdPasajero required"]);
+            return;
+        }
+        $model = new ReservaPasajero();
+        $ok = $model->actualizar($IdReserva, $IdPasajero);
+        if ($ok){
+            echo json_encode(["success" => true]);
+        } else {
+            http_response_code(500);
+            echo json_encode(["success" => false]);
+        }
+    }
 }

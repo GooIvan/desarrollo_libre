@@ -22,7 +22,7 @@ class ReservaPasajero extends conexion{
     // Muestra relaciones por IdReserva
     public function mostrarPorReserva($IdReserva){
         $query = "SELECT rp.IdRelacion, rp.IdReserva, rp.IdPasajero, p.NombreCompleto, p.Telefono, p.DocumentoIdentidad
-                  FROM reserva_pasajeros rp
+                  FROM reservas_pasajeros rp
                   LEFT JOIN pasajeros p ON rp.IdPasajero = p.IdPasajero
                   WHERE rp.IdReserva = ?";
         $env = $this->conn->prepare($query);
@@ -37,7 +37,7 @@ class ReservaPasajero extends conexion{
 
     // Borra una relación por IdReserva y IdPasajero
     public function borrarRelacion($IdReserva, $IdPasajero){
-        $query = "DELETE FROM reserva_pasajeros WHERE IdReserva = ? AND IdPasajero = ?";
+        $query = "DELETE FROM reservas_pasajeros WHERE IdReserva = ? AND IdPasajero = ?";
         $env = $this->conn->prepare($query);
         if (!$env) return false;
         $env->bind_param("ii", $IdReserva, $IdPasajero);
@@ -48,7 +48,7 @@ class ReservaPasajero extends conexion{
 
     // Borra todas las relaciones de una reserva
     public function borrarPorReserva($IdReserva){
-        $query = "DELETE FROM reserva_pasajeros WHERE IdReserva = ?";
+        $query = "DELETE FROM reservas_pasajeros WHERE IdReserva = ?";
         $env = $this->conn->prepare($query);
         if (!$env) return false;
         $env->bind_param("i", $IdReserva);
@@ -57,4 +57,49 @@ class ReservaPasajero extends conexion{
         return $ok;
     }
 
+    public function buscarPorReserva($IdReserva){
+        $query = "SELECT * FROM reservas_pasajeros WHERE IdReserva = ?";
+        $env = $this->conn->prepare($query);
+        if (!$env) return [];
+        $env->bind_param("i", $IdReserva);
+        $env->execute();
+        $result = $env->get_result();
+        $rows = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+        $env->close();
+        return $rows;
+    }
+
+    public function buscarPorPasajero($IdPasajero){
+        $query = "SELECT * FROM reservas_pasajeros WHERE IdPasajero = ?";
+        $env = $this->conn->prepare($query);
+        if (!$env) return [];
+        $env->bind_param("i", $IdPasajero);
+        $env->execute();
+        $result = $env->get_result();
+        $rows = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+        $env->close();
+        return $rows;
+    }
+
+    public function sillaDisponible($IdSilla){
+        $query = "SELECT COUNT(*) AS count FROM reservas_pasajeros WHERE IdSilla = ?";
+        $env = $this->conn->prepare($query);
+        if (!$env) return false;
+        $env->bind_param("i", $IdSilla);
+        $env->execute();
+        $result = $env->get_result();
+        $row = $result ? $result->fetch_assoc() : null;
+        $env->close();
+        return $row && $row['count'] == 0;
+    }
+
+    public function actualizar($IdReserva, $IdPasajero){
+        $query = "UPDATE reservas_pasajeros SET IdPasajero = ? WHERE IdReserva = ?";
+        $env = $this->conn->prepare($query);
+        if (!$env) return false;
+        $env->bind_param("ii", $IdPasajero, $IdReserva);
+        $ok = $env->execute();
+        $env->close();
+        return $ok;
+    }
 }

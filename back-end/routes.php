@@ -4,6 +4,7 @@ require_once "controllers/controllerAccount.php";
 require_once "controllers/controllerPasajeros.php";
 require_once "controllers/controllerReserva.php";
 require_once "controllers/controllerReservaPasajero.php";
+require_once "controllers/controllerVuelo.php";
 
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
@@ -116,6 +117,54 @@ try {
             $controllerReserva->actualizar($idVuelo, $idAccount, $precioTotal, $fechaReserva, $estadoPago);
             break;
             
+            case 'actualizarReservaPasajero':
+            $controllerReservaPasajero = new controllerReservaPasajero();
+            $idReserva = isset($jsonBody['IdReserva']) ? $jsonBody['IdReserva'] : null;
+            $idPasajero = isset($jsonBody['IdPasajero']) ? $jsonBody['IdPasajero'] : null;
+            $controllerReservaPasajero->actualizar($idReserva, $idPasajero);
+            break;
+
+            case 'crearVuelo':
+            $controllerVuelo = new controllerVuelos();
+            $origen = isset($jsonBody['Origen']) ? $jsonBody['Origen'] : null;
+            $destino = isset($jsonBody['Destino']) ? $jsonBody['Destino'] : null;
+            $fechaSalida = isset($jsonBody['FechaSalida']) ? $jsonBody['FechaSalida'] : null;
+            $fechaVuelta = isset($jsonBody['FechaVuelta']) ? $jsonBody['FechaVuelta'] : null;
+            $precioIda = isset($jsonBody['PrecioIda']) ? $jsonBody['PrecioIda'] : null;
+            $precioVuelta = isset($jsonBody['PrecioVuelta']) ? $jsonBody['PrecioVuelta'] : null;
+            $destino = isset($jsonBody['Destino']) ? $jsonBody['Destino'] : null;
+            $controllerVuelo->guardar($IdVuelo, $FechaSalida, $FechaVuelta, $PrecioIda, $PrecioVuelta, $Destino, $Origen, $IdAvion, $Estado);
+             break;
+
+             case 'listarVuelos':
+            $controllerVuelo = new controllerVuelos();
+            $controllerVuelo->listar();
+            break;
+
+            case 'borrarVuelo':
+            $controllerVuelo = new controllerVuelos();
+            $idVuelo = isset($jsonBody['IdVuelo']) ? $jsonBody['IdVuelo'] : null;
+            $controllerVuelo->borrar($idVuelo);
+            break;
+
+            case 'actualizarVuelo':
+            $controllerVuelo = new controllerVuelos();
+            $idVuelo = isset($jsonBody['IdVuelo']) ? $jsonBody['IdVuelo'] : null;
+            $origen = isset($jsonBody['Origen']) ? $jsonBody['Origen'] : null;
+            $destino = isset($jsonBody['Destino']) ? $jsonBody['Destino'] : null;
+            $fechaSalida = isset($jsonBody['FechaSalida']) ? $jsonBody['FechaSalida'] : null;
+            $fechaVuelta = isset($jsonBody['FechaVuelta']) ? $jsonBody['FechaVuelta'] : null;
+            $precioIda = isset($jsonBody['PrecioIda']) ? $jsonBody['PrecioIda'] : null;
+            $precioVuelta = isset($jsonBody['PrecioVuelta']) ? $jsonBody['PrecioVuelta'] : null;
+            $destino = isset($jsonBody['Destino']) ? $jsonBody['Destino'] : null;
+            $controllerVuelo->actualizar($idVuelo, $fechaSalida, $fechaVuelta, $precioIda, $precioVuelta, $destino, $origen, $idAvion);
+            break;
+
+            case 'vuelosDisponibles':
+            $controllerVuelo = new controllerVuelos();
+            $controllerVuelo->vuelosDisponibles();
+            break;
+
 
     }
 } catch (\Throwable $e) {
