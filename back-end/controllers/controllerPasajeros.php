@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__."../models/pasajero.php";
-class controllerAccount{
+class controllerPasajeros{
     public function guardar($NombreCompleto,$Telefono,$DocumentoIdentidad,$Genero,$TipoDocumento,$FechaNacimiento,$IdAccount){
         header("Content-Type:  application/json");
 
@@ -12,6 +12,13 @@ class controllerAccount{
 
         $pasajero = new pasajero();
         $result = $pasajero->agregarPasajero($NombreCompleto,$Telefono,$DocumentoIdentidad,$Genero,$TipoDocumento,$FechaNacimiento,$IdAccount);
+        if ($result !== false){
+            http_response_code(201);
+            echo json_encode(["success" => true, "IdPasajero" => $result]);
+        }else {
+            http_response_code(500);
+            echo json_encode(["success" => false, "message" => "Could not create pasajero"]);
+        }
     }
 
     public function mostrar(){
