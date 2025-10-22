@@ -1,12 +1,12 @@
 <?php
 
-require_once("../models/account.php");
+require_once __DIR__ . "/../models/account.php";
 
 class controllerAccount{
     public function guardar($Email, $Contrasena){
         header('Content-Type: application/json');
 
-        // Validate inputs
+
         if (empty($Email) || empty($Contrasena)){
             http_response_code(400);
             echo json_encode(["success" => false, "message" => "Email and Contrasena are required"]);
@@ -25,17 +25,32 @@ class controllerAccount{
     }
 
     public function mostrar(){
+        header('Content-Type: application/json');
         $account = new account();
-        $account->mostrarAccounts();
+        $rows = $account->mostrarAccounts();
+        echo json_encode($rows);
     }
 
     public function borrar($idAccount){
+        header('Content-Type: application/json');
+        if (empty($idAccount)){
+            http_response_code(400);
+            echo json_encode(["success" => false, "message" => "IdAccount required"]);
+            return;
+        }
         $account = new account();
-        $account->borrarAccount($idAccount);
+        $ok = $account->borrarAccount($idAccount);
+        if ($ok){
+            echo json_encode(["success" => true]);
+        } else {
+            http_response_code(500);
+            echo json_encode(["success" => false]);
+        }
     }
 
     public function actualizar($Email, $Contrasena){
-        $account = new account();
-        $account->actualizarAccount($Email,$Contrasena);
+        header('Content-Type: application/json');
+        
+        echo json_encode(["success" => false, "message" => "Not implemented: provide IdAccount to update"]);
     }
 }
