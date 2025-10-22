@@ -63,6 +63,11 @@ const resources = {
       "feature_coming_soon": "Función próximamente",
       "not_available": "No disponible",
       "loading_profile": "Cargando perfil...",
+
+      // Ofers translations
+      "offers_title": "¡Las mejores ofertas aqui!",
+      "no_offers": "No hay ofertas disponibles",
+      "loading_offers": "Cargando ofertas...",
     }
   },
   en: {
@@ -126,6 +131,11 @@ const resources = {
       "feature_coming_soon": "Feature coming soon",
       "not_available": "Not available",
       "loading_profile": "Loading profile...",
+
+      // Ofers translations
+      "offers_title": "The best offers here!",
+      "no_offers": "No offers available",
+      "loading_offers": "Loading offers...",
     }
   }
 };

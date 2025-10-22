@@ -33,6 +33,10 @@ const HomePage = () => {
               <FlightCardSkeleton key={index} />
             ))}
           </div>
+        ) : flightsToShow.length === 0 ? (
+          <div className="text-center py-5">
+            <h5 className="text-muted">No hay vuelos disponibles</h5>
+          </div>
         ) : (
           <div className="row g-4">
             {flightsToShow.map((flight, index) => (

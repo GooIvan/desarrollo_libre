@@ -4,6 +4,7 @@ import HomePage from "./feature/home/page/HomePage";
 import { HomeProvider } from "./feature/home/context/HomeContext";
 
 import OffersPage from "./feature/offers/page/OffersPage"
+import { OffersProvider } from "./feature/offers/context/OffersContext";
 import LoginPage from "./feature/login/page/LoginPage"
 import ProfilePage from "./feature/profile/page/ProfilePage";
 
@@ -20,8 +21,12 @@ function App() {
         </HomeProvider>
       } />
 
-      {/* ruta ofertas */}
-      <Route path="/offers" element={<OffersPage />} />
+      {/* ruta ofertas con su provider*/}
+      <Route path="/offers" element={
+        <OffersProvider>
+          <OffersPage />
+        </OffersProvider>
+      } />
 
       {/* ruta login */}
       <Route path="/login" element={<LoginPage />} />

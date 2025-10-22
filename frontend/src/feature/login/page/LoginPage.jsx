@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
 import Navbar from "../../../shared/components/Navbar";
+import Footer from "../../../shared/components/Footer";
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -121,6 +122,7 @@ const LoginPage = () => {
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
       <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
     </div>
+      <Footer />
     </>
   );
 };

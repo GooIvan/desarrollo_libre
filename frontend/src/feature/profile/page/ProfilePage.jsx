@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from '../../../shared/components/Navbar';
 import GifLoader from '../../../shared/components/GifLoader';
+import Footer from '../../../shared/components/Footer';
 
 const ProfilePage = () => {
   const { t } = useTranslation();
@@ -106,6 +107,7 @@ const ProfilePage = () => {
       <div>
         <Navbar />
         <GifLoader/>
+        <Footer />
       </div>
     );
   }
@@ -163,6 +165,7 @@ const ProfilePage = () => {
             </div>
           </div>
         </div>
+      <Footer />
       </>
     );
   }
@@ -306,6 +309,7 @@ const ProfilePage = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

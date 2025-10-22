@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from 'react-i18next'
 import { useRegister } from '../context/RegisterContext'
 import Navbar from "../../../shared/components/Navbar";
+import Footer from "../../../shared/components/Footer";
 
 const RegisterPage = () => {
   const [email, setEmail] = useState('');
@@ -163,6 +164,7 @@ const RegisterPage = () => {
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
       <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
     </div>
+      <Footer />
     </>
   );
 };
