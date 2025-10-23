@@ -1,0 +1,12 @@
+<!-- If you prefer Apache to set CORS headers, uncomment these. Currently PHP (routes.php) sets CORS to avoid duplicate headers. -->
+<!--
+<IfModule mod_headers.c>
+    Header always set Access-Control-Allow-Origin "*"
+    Header always set Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, DELETE"
+    Header always set Access-Control-Allow-Headers "Content-Type, Authorization"
+</IfModule>
+-->
+
+# NOTE: Previously this file sent a 204 for OPTIONS at Apache level which
+# prevented PHP from adding CORS headers. That behavior was removed so
+# preflight requests reach `routes.php` which sets the Access-Control-* headers.
