@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . "/../models/vuelos.php";
+require_once __DIR__ . "/../config/conexion.php";
 
 class aviones extends conexion{
     public function agregarAviones($IdAvion, $Capacidad, $Tamaño, $Marca, $IdAerolinea){

@@ -4,7 +4,7 @@ require_once __DIR__ . "/../models/reserva_pasajero.php";
 
 class controllerReservaPasajero {
 
-    public function crear($IdReserva, $IdPasajero){
+    public function crear($IdReserva, $IdPasajero, $IdSilla = null, $TipoPasajero = null){
         header('Content-Type: application/json');
 
         if (empty($IdReserva) || empty($IdPasajero)){
@@ -14,7 +14,18 @@ class controllerReservaPasajero {
         }
 
         $model = new ReservaPasajero();
-        
+        if (!empty($IdSilla)){
+            $ok = $model->reservarSillaParaPasajero($IdReserva, $IdPasajero, $IdSilla, $TipoPasajero);
+            if ($ok){
+                http_response_code(201);
+                echo json_encode(["success" => true]);
+            } else {
+                http_response_code(409);
+                echo json_encode(["success" => false, "message" => "Could not reserve seat"]);
+            }
+            return;
+        }
+
         $insertId = $model->agregarRelacion($IdReserva, $IdPasajero);
         if ($insertId !== false){
             http_response_code(201);
