@@ -94,4 +94,59 @@ class controllerVuelos{
             echo json_encode(["success" => false, "message" => "Could not retrieve available vuelos"]);
         }
     }
+
+    public function buscarVuelos($origen = '', $destino = '', $fechaSalida = '', $fechaVuelta = '', $tipoVuelo = 'oneWay'){
+        header('Content-Type: application/json');
+
+        try {
+            $vuelos = new vuelos();
+            $result = $vuelos->buscarVuelosConFiltros($origen, $destino, $fechaSalida, $fechaVuelta, $tipoVuelo);
+            
+            if ($result !== false){
+                http_response_code(200);
+                echo json_encode([
+                    "success" => true, 
+                    "data" => $result,
+                    "filters" => [
+                        "origen" => $origen,
+                        "destino" => $destino, 
+                        "fechaSalida" => $fechaSalida,
+                        "fechaVuelta" => $fechaVuelta,
+                        "tipoVuelo" => $tipoVuelo
+                    ]
+                ]);
+            } else {
+                http_response_code(500);
+                echo json_encode(["success" => false, "message" => "Could not search flights"]);
+            }
+        } catch (Exception $e) {
+            error_log("Error en buscarVuelos: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(["success" => false, "message" => "Error interno del servidor"]);
+        }
+    }
+
+    public function obtenerVueloPorId($id) {
+        try {
+            error_log("Obteniendo vuelo por ID: $id");
+            
+            $vuelos = new vuelos();
+            $result = $vuelos->obtenerVueloPorId($id);
+            
+            if ($result) {
+                http_response_code(200);
+                echo json_encode([
+                    "success" => true,
+                    "vuelo" => $result
+                ]);
+            } else {
+                http_response_code(404);
+                echo json_encode(["success" => false, "message" => "Vuelo no encontrado"]);
+            }
+        } catch (Exception $e) {
+            error_log("Error en obtenerVueloPorId: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(["success" => false, "message" => "Error interno del servidor"]);
+        }
+    }
 }

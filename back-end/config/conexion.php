@@ -13,5 +13,3 @@ class conexion{
     }
         
     }
-
-new conexion();
