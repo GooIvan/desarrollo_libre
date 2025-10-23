@@ -11,7 +11,5 @@ class conexion{
             throw new \RuntimeException('Database connection error: ' . $this->conn->connect_error);
         }
     }
-        
+    
     }
-
-new conexion();

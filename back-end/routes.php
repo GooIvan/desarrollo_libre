@@ -1,16 +1,18 @@
 <?php
 
-require_once "controllers/controllerAccount.php";
-require_once "controllers/controllerPasajeros.php";
-require_once "controllers/controllerReserva.php";
-require_once "controllers/controllerReservaPasajero.php";
-require_once "controllers/controllerVuelo.php";
-require_once "controllers/controllerAviones.php";
+// Convert PHP errors/warnings to ErrorExceptions so they can be caught
+set_error_handler(function($severity, $message, $file, $line) {
+    throw new \ErrorException($message, 0, $severity, $file, $line);
+});
+
+// Remove any previously set CORS headers (e.g. from .htaccess or index.php)
+header_remove('Access-Control-Allow-Origin');
+header_remove('Access-Control-Allow-Methods');
+header_remove('Access-Control-Allow-Headers');
 
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
-
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(204);
@@ -25,25 +27,37 @@ $jsonBody = json_decode($raw, true);
 header('Content-Type: application/json');
 
 try {
+    // require controllers after setting error handler to ensure include failures are caught
+    require_once __DIR__ . "/controllers/controllerAccount.php";
+    require_once __DIR__ . "/controllers/controllerPasajeros.php";
+    require_once __DIR__ . "/controllers/controllerReserva.php";
+    require_once __DIR__ . "/controllers/controllerReservaPasajero.php";
+    require_once __DIR__ . "/controllers/controllerVuelos.php";
+    require_once __DIR__ . "/controllers/controllerAviones.php";
+
     $controllerAccount = new controllerAccount();
 
     switch ($accion) {
         case 'crearAccount':
+            $controllerAccount = new controllerAccount();
             $email = isset($jsonBody['Email']) ? $jsonBody['Email'] : null;
             $contrasena = isset($jsonBody['Contrasena']) ? $jsonBody['Contrasena'] : null;
             $controllerAccount->guardar($email, $contrasena);
             break;
 
         case 'mostrarAccount':
+            $controllerAccount = new controllerAccount();
             $controllerAccount->mostrar();
             break;
 
         case 'borrarAccount':
+            $controllerAccount = new controllerAccount();
             $idAccount = isset($jsonBody['IdAccount']) ? $jsonBody['IdAccount'] : null;
             $controllerAccount->borrar($idAccount);
             break;
 
         case 'actualizarAccount':
+            $controllerAccount = new controllerAccount();
             $idAccount = isset($jsonBody['IdAccount']) ? $jsonBody['IdAccount'] : null;
             $email = isset($jsonBody['Email']) ? $jsonBody['Email'] : null;
             $contrasena = isset($jsonBody['Contrasena']) ? $jsonBody['Contrasena'] : null;
@@ -52,6 +66,7 @@ try {
             break;
 
             case 'validarAccount':
+            $controllerAccount = new controllerAccount();
             $email = isset($jsonBody['Email']) ? $jsonBody['Email'] : null;
             $contrasena = isset($jsonBody['Contrasena']) ? $jsonBody['Contrasena'] : null;
             $controllerAccount->validar($email, $contrasena);

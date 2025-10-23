@@ -1,10 +1,10 @@
 <?php
 
-require_once __DIR__."../models/reserva.php";
+require_once __DIR__ . "/../models/reserva.php";
 
 class controllerReserva{
     public function guardar($IdVuelo, $IdAccount,$PrecioTotal, $FechaReserva, $EstadoPago){
-        header("Content-Type : application/json");
+        header("Content-Type: application/json");
 
         $reserva= new Reserva();
         $result = $reserva->agregarReserva($IdVuelo, $IdAccount,$PrecioTotal, $FechaReserva, $EstadoPago);

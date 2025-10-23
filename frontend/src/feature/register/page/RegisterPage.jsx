@@ -5,6 +5,7 @@ import { useRegister } from '../context/RegisterContext'
 import Navbar from "../../../shared/components/Navbar";
 import Footer from "../../../shared/components/Footer";
 
+
 const RegisterPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

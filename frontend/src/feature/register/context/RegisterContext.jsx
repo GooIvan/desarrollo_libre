@@ -32,7 +32,7 @@ export const RegisterProvider = ({ children }) => {
         setLoading(true);
 
     try {
-        const response = await fetch(`http://localhost/desarrollo_libre/back-end/routes.php?accion=crearAccount`, {
+        const response = await fetch(`http://localhost/desarrollolibre/back-end/routes.php?accion=crearAccount`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -40,7 +40,30 @@ export const RegisterProvider = ({ children }) => {
             body: JSON.stringify({ Email: email, Contrasena: password }),
         });
 
-        const data = await response.json();
+        // Read raw text first to avoid `Unexpected end of input` when the
+        // response is empty or not valid JSON (e.g. 404/500 with empty body).
+        const raw = await response.text();
+
+        if (!response.ok) {
+            console.error(`Registration request failed: ${response.status} ${response.statusText}`, raw, response);
+            // try to parse body for more info
+            let errBody = null;
+            try { errBody = raw ? JSON.parse(raw) : null; } catch(e) { errBody = raw; }
+            return false;
+        }
+
+        let data = null;
+        if (raw) {
+            try {
+                data = JSON.parse(raw);
+            } catch (e) {
+                console.error("Failed to parse JSON response:", raw, e);
+                throw new Error("Invalid JSON response from server");
+            }
+        } else {
+            console.warn("Empty response body from registration endpoint");
+        }
+
         console.log("Register response received:", data);
 
         if (data && data.success) {

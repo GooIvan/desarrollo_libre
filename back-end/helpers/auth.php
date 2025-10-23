@@ -8,7 +8,7 @@ function require_session(){
 function login_user($IdAccount, $RoleId){
     require_session();
     $_SESSION['IdAccount'] = $IdAccount;
-    $_SESSION['RoleId'] = $RoleId;
+    $_SESSION['IdRol'] = $RoleId;
 }
 
 function logout_user(){
@@ -19,13 +19,13 @@ function logout_user(){
 
 function current_user(){
     require_session();
-    return isset($_SESSION['IdAccount']) ? [ 'IdAccount' => $_SESSION['IdAccount'], 'RoleId' => $_SESSION['RoleId'] ] : null;
+    return isset($_SESSION['IdAccount']) ? [ 'IdAccount' => $_SESSION['IdAccount'], 'IdRol' => $_SESSION['IdRol'] ] : null;
 }
 
 function require_role($roles){
     require_session();
     $user = current_user();
     if (!$user) return false;
-    if (is_array($roles)) return in_array($user['RoleId'], $roles);
-    return $user['RoleId'] == $roles;
+    if (is_array($roles)) return in_array($user['IdRol'], $roles);
+    return $user['IdRol'] == $roles;
 }

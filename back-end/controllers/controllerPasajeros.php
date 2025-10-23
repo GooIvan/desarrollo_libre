@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__."../models/pasajero.php";
+require_once __DIR__ . "/../models/pasajero.php";
 class controllerPasajeros{
     public function guardar($NombreCompleto,$Telefono,$DocumentoIdentidad,$Genero,$TipoDocumento,$FechaNacimiento,$IdAccount){
         header("Content-Type:  application/json");
