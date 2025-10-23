@@ -1,20 +1,36 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
 import Navbar from "../../../shared/components/Navbar";
 import Footer from "../../../shared/components/Footer";
+import { useLogin } from "../context/LoginContext";
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const { t } = useTranslation();
+  const { login, loading } = useLogin();
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Login attempt:', { email, password });
-    // Aquí iría la lógica de autenticación
+
+    try {
+      const success = await login({ email, password });
+      if (success) {
+        // Mostrar mensaje de éxito y redirigir al perfil después de un breve delay
+        setTimeout(() => {
+          navigate('/profile');
+        }, 100);
+      } else {
+        alert(t('login_failed', 'Error en el inicio de sesión'));
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+      alert(t('login_error', 'Error durante el inicio de sesión'));
+    }
   };
 
   return (
@@ -76,14 +92,25 @@ const LoginPage = () => {
                   {/* Botón de login */}
                   <button
                     type="submit"
-                    className="btn btn-lg w-100 text-white fw-semibold rounded-3 mb-3"
-                    style={{ 
-                      backgroundColor: '#6f42c1', 
+                    className="btn btn-lg w-100 text-white fw-semibold rounded-3 mb-3 d-flex justify-content-center align-items-center"
+                    style={{
+                      backgroundColor: '#6f42c1',
                       borderColor: '#6f42c1',
-                      padding: '12px'
+                      padding: '12px',
+                      opacity: loading ? 0.8 : 1,
+                      cursor: loading ? 'not-allowed' : 'pointer',
                     }}
+                    disabled={loading}
                   >
-                    {t('login_button', 'Ingresar')}
+                    {loading ? (
+                      <span
+                        className="spinner-border spinner-border-sm text-light"
+                        role="status"
+                        aria-hidden="true"
+                      ></span>
+                    ) : (
+                      t('login', 'Iniciar sesión')
+                    )}
                   </button>
 
                   {/* Enlaces adicionales */}
