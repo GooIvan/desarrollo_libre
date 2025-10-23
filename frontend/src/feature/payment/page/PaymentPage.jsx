@@ -158,7 +158,8 @@ const PaymentPage = () => {
               state: { 
                 flightId, 
                 passengers: passengersWithFlight,
-                seats: selectedSeats
+                seats: selectedSeats,
+                flight: flight
               }
             });
           }, 2000);

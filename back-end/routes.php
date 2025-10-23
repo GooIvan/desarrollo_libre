@@ -248,6 +248,30 @@ try {
             $controllerAviones = new controllerAviones();
             $controllerAviones->listar();
             break;
+
+        case 'obtenerSillasVuelo':
+            require_once "controllers/controllerSillas.php";
+            $controllerSillas = new controllerSillas();
+            $controllerSillas->obtenerSillasPorVuelo();
+            break;
+
+        case 'obtenerSillasAvion':
+            require_once "controllers/controllerSillas.php";
+            $controllerSillas = new controllerSillas();
+            $controllerSillas->obtenerSillasAvion();
+            break;
+
+        case 'listarSillas':
+            require_once "controllers/controllerSillas.php";
+            $controllerSillas = new controllerSillas();
+            $controllerSillas->obtenerTodasLasSillas();
+            break;
+
+        case 'crearSilla':
+            require_once "controllers/controllerSillas.php";
+            $controllerSillas = new controllerSillas();
+            $controllerSillas->agregarSilla();
+            break;
     }
     
 } catch (Exception $e) {

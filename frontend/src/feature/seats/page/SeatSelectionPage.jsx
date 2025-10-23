@@ -1,20 +1,93 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import Footer from "../../../shared/components/Footer";
 import Navbar from "../../../shared/components/Navbar";
 
 const SeatSelectionPage = () => {
   const { flightId } = useParams();
   const navigate = useNavigate();
-  const { t } = useTranslation();
   
-  const [flight, setFlight] = useState(null);
   const [seats, setSeats] = useState([]);
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [passengers, setPassengers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Función de respaldo para generar asientos simulados
+  const generateFallbackSeats = useCallback(() => {
+    const occupiedSeats = [1, 3, 7, 12, 15, 18, 22, 25, 30]; // Asientos ocupados simulados
+    const seatLayout = [];
+    
+    for (let row = 1; row <= 30; row++) {
+      for (let letter of ['A', 'B', 'C', 'D', 'E', 'F']) {
+        const seatNumber = `${row}${letter}`;
+        const seatId = ((row - 1) * 6) + ['A', 'B', 'C', 'D', 'E', 'F'].indexOf(letter) + 1;
+        
+        seatLayout.push({
+          id: seatId,
+          number: seatNumber,
+          row: row,
+          letter: letter,
+          isOccupied: occupiedSeats.includes(seatId),
+          isSelected: false,
+          type: row <= 5 ? 'premium' : 'economy'
+        });
+      }
+    }
+    
+    return seatLayout;
+  }, []);
+
+  const loadFlightAndSeats = useCallback(async () => {
+    try {
+      setLoading(true);
+      
+      // Obtener información del vuelo
+      const flightResponse = await fetch(`http://localhost/desarrollo_libre/back-end/routes.php?accion=obtenerVuelo&id=${flightId}`);
+      const flightData = await flightResponse.json();
+      
+      if (flightData.success) {
+        // Obtener asientos disponibles para este vuelo desde la base de datos
+        // Usando endpoint de test temporalmente
+        const seatsResponse = await fetch(`http://localhost/desarrollo_libre/back-end/test_sillas.php`);
+        const seatsData = await seatsResponse.json();
+        
+        if (seatsData.success && seatsData.sillas) {
+          // Mapear los datos de la base de datos al formato que usa el componente
+          const seatLayout = seatsData.sillas.map(silla => ({
+            id: silla.IdSilla,
+            number: silla.numeroAsiento,
+            row: parseInt(silla.Fila),
+            letter: silla.Columna,
+            isOccupied: silla.ocupado,
+            isSelected: false,
+            type: silla.Clase && silla.Clase.toLowerCase() === 'premium' ? 'premium' : 'economy'
+          }));
+          
+          setSeats(seatLayout);
+          console.log(`Cargados ${seatLayout.length} asientos desde la base de datos`);
+        } else {
+          // Fallback: si no hay asientos en la BD, usar asientos simulados
+          console.warn('No se pudieron cargar asientos desde la BD, usando datos simulados');
+          const seatLayout = generateFallbackSeats();
+          setSeats(seatLayout);
+        }
+      } else {
+        setError('No se pudo cargar la información del vuelo');
+      }
+    } catch (error) {
+      console.error('Error loading flight and seats:', error);
+      
+      // En caso de error, usar asientos simulados como respaldo
+      console.warn('Error al conectar con la BD, usando datos simulados');
+      const seatLayout = generateFallbackSeats();
+      setSeats(seatLayout);
+      
+      setError('Advertencia: Usando datos simulados de asientos');
+    } finally {
+      setLoading(false);
+    }
+  }, [flightId, generateFallbackSeats]);
 
   useEffect(() => {
     // Obtener datos de pasajeros desde localStorage o contexto
@@ -24,50 +97,9 @@ const SeatSelectionPage = () => {
     }
     
     loadFlightAndSeats();
-  }, [flightId]);
+  }, [loadFlightAndSeats]);
 
-  const loadFlightAndSeats = async () => {
-    try {
-      setLoading(true);
-      
-      // Obtener información del vuelo
-      const flightResponse = await fetch(`http://localhost/desarrollo_libre/back-end/routes.php?accion=obtenerVuelo&id=${flightId}`);
-      const flightData = await flightResponse.json();
-      
-      if (flightData.success) {
-        setFlight(flightData.vuelo);
-      }
 
-      // Generar asientos simulados (esto debería venir de la base de datos)
-      const totalSeats = 180; // Avión típico
-      const occupiedSeats = [1, 3, 7, 12, 15, 18, 22, 25, 30]; // Asientos ocupados simulados
-      
-      const seatLayout = [];
-      for (let row = 1; row <= 30; row++) {
-        for (let letter of ['A', 'B', 'C', 'D', 'E', 'F']) {
-          const seatNumber = `${row}${letter}`;
-          const seatId = ((row - 1) * 6) + ['A', 'B', 'C', 'D', 'E', 'F'].indexOf(letter) + 1;
-          
-          seatLayout.push({
-            id: seatId,
-            number: seatNumber,
-            row: row,
-            letter: letter,
-            isOccupied: occupiedSeats.includes(seatId),
-            isSelected: false,
-            type: row <= 5 ? 'premium' : 'economy'
-          });
-        }
-      }
-      
-      setSeats(seatLayout);
-    } catch (error) {
-      console.error('Error loading flight and seats:', error);
-      setError('Error al cargar la información del vuelo');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleSeatSelect = (seatId) => {
     const seat = seats.find(s => s.id === seatId);
