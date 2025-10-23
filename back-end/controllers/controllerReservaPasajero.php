@@ -1,11 +1,19 @@
 <?php
 
 require_once __DIR__ . "/../models/reserva_pasajero.php";
+require_once __DIR__ . "/../helpers/auth.php";
 
 class controllerReservaPasajero {
 
     public function crear($IdReserva, $IdPasajero, $IdSilla = null, $TipoPasajero = null){
         header('Content-Type: application/json');
+
+        // require logged-in cliente
+        if (!require_role(2)){
+            http_response_code(403);
+            echo json_encode(["success" => false, "message" => "Forbidden: requires cliente role"]);
+            return;
+        }
 
         if (empty($IdReserva) || empty($IdPasajero)){
             http_response_code(400);
