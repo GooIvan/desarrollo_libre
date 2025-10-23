@@ -34,11 +34,11 @@ class pasajero extends conexion{
         return $ok;
     }
 
-    public function actualizarPasajero($NombreCompleto,$Telefono,$DocumentoIdentidad,$Genero,$TipoDocumento,$FechaNacimiento,$IdAccount){
-        $query="UPDATE pasajeros SET NombreCompleto = ?, Telefono=?, DocumentoIdentidad=?, Genero=?, TipoDocumento=?, FechaNacimiento=?, UltimaModificacion=NOW() WHERE IdReserva = ?";
+    public function actualizarPasajero($IdPasajero,$NombreCompleto,$Telefono,$DocumentoIdentidad,$Genero,$Nacionalidad,$FechaNacimiento){
+        $query="UPDATE pasajeros SET NombreCompleto = ?, Telefono=?, DocumentoIdentidad=?, Genero=?, Nacionalidad=?, FechaNacimiento=?, UltimaModificacion=NOW() WHERE IdPasajero = ?";
         $env = $this->conn->prepare($query);
         if (!$env) return false;
-        $env->bind_param("ssssssi", $NombreCompleto,$Telefono,$DocumentoIdentidad,$Genero,$TipoDocumento,$FechaNacimiento,$IdAccount);
+        $env->bind_param("ssssssi", $NombreCompleto,$Telefono,$DocumentoIdentidad,$Genero,$Nacionalidad,$FechaNacimiento,$IdPasajero);
         $ok = $env->execute();
         $env->close();
         return $ok;

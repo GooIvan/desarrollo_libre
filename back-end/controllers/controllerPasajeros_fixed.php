@@ -1,19 +1,21 @@
 <?php
+
 require_once __DIR__ . "/../models/pasajero.php";
+
 class controllerPasajeros{
 
-    public function guardar($NombreCompleto,$Telefono,$DocumentoIdentidad,$Genero,$Nacionalidad,$FechaNacimiento,$esPagante = 0, $vueloId = null){
+    public function guardar($NombreCompleto,$Telefono,$DocumentoIdentidad,$Genero,$Nacionalidad,$FechaNacimiento){
         try {
-            error_log("Guardando pasajero: $NombreCompleto, $DocumentoIdentidad, esPagante: $esPagante, vueloId: $vueloId");
+            error_log("Guardando pasajero: $NombreCompleto, $DocumentoIdentidad");
 
-            if(empty($NombreCompleto)){
+            if(empty($NombreCompleto) || empty($DocumentoIdentidad)){
                 http_response_code(400);
-                echo json_encode(["success" => false, "message" => "Nombre es obligatorio"]);
+                echo json_encode(["success" => false, "message" => "Nombre y Documento son obligatorios"]);
                 return;
             }
 
             $pasajero = new pasajero();
-            $result = $pasajero->agregarPasajero($NombreCompleto,$Telefono,$DocumentoIdentidad,$Genero,$Nacionalidad,$FechaNacimiento,$esPagante,$vueloId);
+            $result = $pasajero->agregarPasajero($NombreCompleto,$Telefono,$DocumentoIdentidad,$Genero,$Nacionalidad,$FechaNacimiento);
             
             if ($result !== false){
                 http_response_code(201);

@@ -5,33 +5,43 @@ const OffersContext = createContext();
 export const OffersProvider = ({ children }) => {
     const [flights, setFlights] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
     const fetchFlights = useCallback(async () => {
         if (loading) return;
         setLoading(true);
-
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+        setError(null);
 
         try {
-            const url = `https://mocki.io/v1/81049dd1-7cb8-4005-bb71-de3214929108`;
-
-            const res = await fetch(url, {
+            const response = await fetch(`http://localhost/desarrollo_libre/back-end/routes.php?accion=vuelosDisponibles`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                 },
             });
 
-            if (!res.ok) {
-                const errorText = await res.text();
-                throw new Error(`HTTP ${res.status}: ${errorText}`);
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
 
-            const data = await res.json();
-
-            setFlights(data);
+            const data = await response.json();
+            console.log("Vuelos obtenidos en Offers:", data);
+            
+            // El backend devuelve {success: true, data: [...]}
+            if (data.success && data.data) {
+                setFlights(data.data);
+            } else if (Array.isArray(data)) {
+                // Por si acaso el backend devuelve directamente un array
+                setFlights(data);
+            } else {
+                console.warn("Estructura de datos inesperada:", data);
+                setFlights([]);
+            }
+            
         } catch (err) {
             console.error("Error fetching flights:", err);
+            setError(err.message);
+            setFlights([]);
         } finally {
             setLoading(false);
         }
@@ -39,7 +49,12 @@ export const OffersProvider = ({ children }) => {
 
     return (
         <OffersContext.Provider
-            value={{ flights, fetchFlights, loading }}
+            value={{ 
+                flights, 
+                fetchFlights, 
+                loading, 
+                error 
+            }}
         >
             {children}
         </OffersContext.Provider>

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from 'react-i18next';
+import { useHome } from '../../feature/home/context/HomeContext';
 
 const FlightSearchForm = () => {
   const [selected, setSelected] = useState("roundTrip");
@@ -12,6 +13,7 @@ const FlightSearchForm = () => {
   const [showOriginSuggestions, setShowOriginSuggestions] = useState(false);
   const [showDestinationSuggestions, setShowDestinationSuggestions] = useState(false);
   const { t } = useTranslation();
+  const { searchFlights, loading } = useHome();
 
   // Lista de ciudades y aeropuertos
   const cities = [
@@ -94,7 +96,7 @@ const FlightSearchForm = () => {
   nextWeek.setDate(today.getDate() + 7);
   const defaultReturn = nextWeek.toISOString().split('T')[0];
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
     const searchData = {
       type: selected,
       origin: originInput,
@@ -104,7 +106,12 @@ const FlightSearchForm = () => {
     };
     
     console.log('Búsqueda de vuelos:', searchData);
-    // Aquí iría la lógica de búsqueda
+    
+    try {
+      await searchFlights(searchData);
+    } catch (error) {
+      console.error('Error en búsqueda:', error);
+    }
   };
 
   return (
@@ -315,8 +322,16 @@ const FlightSearchForm = () => {
             className="btn btn-dark btn-lg w-100 rounded-4"
             style={{ backgroundColor: '#6f42c1', borderColor: '#6f42c1' }}
             onClick={handleSearch}
+            disabled={loading}
           >
-            {t('search')}
+            {loading ? (
+              <>
+                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                {t('searching') || 'Buscando...'}
+              </>
+            ) : (
+              t('search')
+            )}
           </button>
         </div>
       </div>
